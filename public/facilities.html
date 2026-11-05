@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MU-EAMS 2026 | Facilities & Equipment Inventory</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { prefix: 'tw-', corePlugins: { preflight: false } };</script>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+
+  <!-- Collapsible Top Navigation Bar -->
+  <nav class="navbar navbar-expand-lg mu-navbar sticky-top py-2">
+    <div class="container-fluid px-lg-4">
+      <a class="navbar-brand d-flex align-items-center gap-2 text-white fw-bold" href="/index.html">
+        <span class="tw-w-9 tw-h-9 tw-rounded-lg tw-bg-emerald-500 tw-text-slate-950 d-grid place-items-center fw-bolder">⚡</span>
+        <div>
+          <div class="tw-text-sm tw-tracking-wide">MU-EAMS <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-50 ms-1">2026.2</span></div>
+          <div class="tw-text-[10px] tw-text-slate-400 tw-font-normal">MOI UNIVERSITY ENERGY INTELLIGENCE</div>
+        </div>
+      </a>
+      <button class="navbar-toggler border-secondary text-white" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+        <i class="bi bi-three-dots-vertical"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav mx-auto gap-1 my-2 my-lg-0">
+          <li class="nav-item"><a class="nav-link mu-nav-link" href="/index.html"><i class="bi bi-speedometer2 me-1"></i>Overview</a></li>
+          <li class="nav-item"><a class="nav-link mu-nav-link active" href="/facilities.html"><i class="bi bi-buildings me-1"></i>Facilities & Assets</a></li>
+          <li class="nav-item"><a class="nav-link mu-nav-link" href="/meters.html"><i class="bi bi-lightning-charge me-1"></i>Submeters & Conditions</a></li>
+          <li class="nav-item"><a class="nav-link mu-nav-link" href="/audits.html"><i class="bi bi-clipboard2-check me-1"></i>Field Audits & ECMs</a></li>
+        </ul>
+        <div class="d-flex align-items-center gap-2">
+          <button class="btn btn-sm btn-success fw-semibold" data-bs-toggle="modal" data-bs-target="#addFacilityModal">
+            <i class="bi bi-plus-lg me-1"></i>Add Facility
+          </button>
+          <button class="btn btn-sm btn-outline-light fw-semibold" data-bs-toggle="modal" data-bs-target="#addAssetModal">
+            <i class="bi bi-cpu me-1"></i>Log Equipment
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container-fluid px-lg-4 py-4" style="max-width: 1540px;">
+    <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+      <div>
+        <div class="text-uppercase tw-text-xs fw-bold text-success tw-tracking-wider mb-1">Portfolio Registry & Load Inventory</div>
+        <h2 class="fw-bold mb-1">Campus Facilities & Significant Energy Users (SEUs)</h2>
+        <p class="text-muted small mb-0">Filter buildings by audit baseline status, evaluate Energy Use Intensity (kWh/m²), and manage equipment ratings.</p>
+      </div>
+      <div class="d-flex flex-wrap gap-2">
+        <input type="search" id="search-fac" class="form-control form-control-sm" style="width: 240px;" placeholder="Search facility or department...">
+        <select id="filter-fac" class="form-select form-select-sm" style="width: 170px;">
+          <option value="all">All Facilities</option>
+          <option value="audited">Audited Baseline</option>
+          <option value="candidate">Candidate Sites</option>
+        </select>
+        <button class="btn btn-sm btn-white border bg-white fw-semibold" id="btn-export-fac"><i class="bi bi-download me-1"></i>Export CSV</button>
+      </div>
+    </div>
+
+    <!-- Facilities Card Grid -->
+    <div class="row g-3 mb-5" id="facilities-grid"></div>
+
+    <!-- Significant Energy Users (Equipment Table) -->
+    <div class="mu-card p-4">
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+        <div>
+          <h5 class="fw-bold mb-1">Equipment & Significant Energy Users (SEU) Register</h5>
+          <p class="text-muted small mb-0">Calculated daily kWh = (Nameplate Rating W ÷ 1000) × Quantity × Operating Hours/Day</p>
+        </div>
+        <div class="d-flex gap-2">
+          <select id="filter-asset-fac" class="form-select form-select-sm" style="width: 240px;">
+            <option value="all">All Campus Facilities</option>
+          </select>
+          <button class="btn btn-sm btn-success fw-semibold" data-bs-toggle="modal" data-bs-target="#addAssetModal">
+            <i class="bi bi-plus-lg me-1"></i>Add Asset
+          </button>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-mu mb-0">
+          <thead>
+            <tr>
+              <th>Equipment / Load Description</th>
+              <th>Facility</th>
+              <th>Category & Fuel</th>
+              <th class="text-end">Rating (W)</th>
+              <th class="text-end">Qty</th>
+              <th class="text-end">Hrs/Day</th>
+              <th class="text-end">Daily kWh</th>
+              <th>Condition</th>
+            </tr>
+          </thead>
+          <tbody id="assets-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- Add Facility Modal -->
+  <div class="modal fade" id="addFacilityModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <form class="modal-content border-0 shadow" id="form-facility">
+        <div class="modal-header bg-light">
+          <h6 class="modal-title fw-bold">Add Campus Facility to Registry</h6>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label small fw-bold">Facility Name *</label>
+            <input type="text" name="name" class="form-control" required placeholder="e.g. School of Aerospace Sciences Block">
+          </div>
+          <div class="row g-2 mb-3">
+            <div class="col-6">
+              <label class="form-label small fw-bold">Category *</label>
+              <select name="type" class="form-select" required>
+                <option>Laboratory & Teaching</option>
+                <option>Student Residence</option>
+                <option>Library</option>
+                <option>Kitchen & Dining</option>
+                <option>Administration</option>
+                <option>ICT Facility</option>
+                <option>Industrial / Process</option>
+                <option>Water Infrastructure</option>
+                <option>Healthcare</option>
+              </select>
+            </div>
+            <div class="col-6">
+              <label class="form-label small fw-bold">Campus Group / Faculty</label>
+              <input type="text" name="group" class="form-control" placeholder="e.g. School of Engineering">
+            </div>
+          </div>
+          <div class="row g-2 mb-3">
+            <div class="col-4">
+              <label class="form-label small fw-bold">Floor Area (m²)</label>
+              <input type="number" step="0.1" name="areaSqm" class="form-control font-mono-num" placeholder="e.g. 2400">
+            </div>
+            <div class="col-4">
+              <label class="form-label small fw-bold">Occupants</label>
+              <input type="number" name="occupants" class="form-control font-mono-num" placeholder="e.g. 450">
+            </div>
+            <div class="col-4">
+              <label class="form-label small fw-bold">Year Built</label>
+              <input type="number" name="yearBuilt" class="form-control font-mono-num" placeholder="1998">
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label small fw-bold">Measured Annual Baseline (kWh) <span class="text-muted fw-normal">(Leave blank if candidate)</span></label>
+            <input type="number" step="0.1" name="annualKwh" class="form-control font-mono-num" placeholder="Optional — e.g. 145000">
+          </div>
+          <div class="mb-2">
+            <label class="form-label small fw-bold">Engineering Scope / Notes</label>
+            <textarea name="note" rows="2" class="form-control" placeholder="Main transformers, HVAC types, operational schedule..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer bg-light">
+          <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-sm btn-success fw-semibold">Save Facility</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Add Asset Modal -->
+  <div class="modal fade" id="addAssetModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <form class="modal-content border-0 shadow" id="form-asset">
+        <div class="modal-header bg-light">
+          <h6 class="modal-title fw-bold">Log Equipment / Significant Energy User</h6>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label small fw-bold">Facility *</label>
+            <select name="facilityId" id="asset-fac-select" class="form-select" required></select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label small fw-bold">Equipment Name *</label>
+            <input type="text" name="name" class="form-control" required placeholder="e.g. 30kW Air Compressor">
+          </div>
+          <div class="row g-2 mb-3">
+            <div class="col-6">
+              <label class="form-label small fw-bold">System Category</label>
+              <select name="category" class="form-select">
+                <option>Lighting</option>
+                <option>Motors / pumps / fans</option>
+                <option>HVAC / cooling</option>
+                <option>Cooking & process heat</option>
+                <option>Water heating</option>
+                <option>Laboratory equipment</option>
+                <option>ICT / plug loads</option>
+                <option>Refrigeration</option>
+              </select>
+            </div>
+            <div class="col-6">
+              <label class="form-label small fw-bold">Energy Carrier</label>
+              <select name="fuel" class="form-select">
+                <option>Electricity</option>
+                <option>LPG</option>
+                <option>Solar</option>
+                <option>Diesel</option>
+                <option>Biomass</option>
+              </select>
+            </div>
+          </div>
+          <div class="row g-2 mb-3">
+            <div class="col-4">
+              <label class="form-label small fw-bold">Power Rating (W) *</label>
+              <input type="number" step="0.1" name="ratingW" class="form-control font-mono-num" required placeholder="e.g. 2200">
+            </div>
+            <div class="col-4">
+              <label class="form-label small fw-bold">Quantity *</label>
+              <input type="number" name="quantity" class="form-control font-mono-num" value="1" required>
+            </div>
+            <div class="col-4">
+              <label class="form-label small fw-bold">Hours / Day *</label>
+              <input type="number" step="0.1" max="24" name="hours" class="form-control font-mono-num" value="6" required>
+            </div>
+          </div>
+          <div class="mb-2">
+            <label class="form-label small fw-bold">Operational Condition</label>
+            <select name="status" class="form-select">
+              <option>Working</option>
+              <option>Needs maintenance</option>
+              <option>Not working</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer bg-light">
+          <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-sm btn-success fw-semibold">Save Equipment</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/api.js"></script>
+  <script>
+    let state = null;
+
+    async function loadPage() {
+      state = await MUEAMS.request('/state');
+      const facOptions = state.facilities.map(f => `<option value="${MUEAMS.esc(f.id)}">${MUEAMS.esc(f.name)}</option>`).join('');
+      document.getElementById('asset-fac-select').innerHTML = facOptions;
+      document.getElementById('filter-asset-fac').innerHTML = `<option value="all">All Campus Facilities</option>` + facOptions;
+      renderFacilities();
+      renderAssets();
+    }
+
+    function renderFacilities() {
+      const q = document.getElementById('search-fac').value.toLowerCase();
+      const filter = document.getElementById('filter-fac').value;
+
+      const list = state.facilities.filter(f => {
+        if (filter === 'audited' && !f.baseline) return false;
+        if (filter === 'candidate' && f.baseline) return false;
+        return !q || `${f.name} ${f.type} ${f.group}`.toLowerCase().includes(q);
+      });
+
+      document.getElementById('facilities-grid').innerHTML = list.map(f => {
+        const sqm = f.areaSqFt ? f.areaSqFt * 0.092903 : null;
+        const eui = f.baseline && sqm ? (f.baseline.annualKwh / sqm) : null;
+        return `
+          <div class="col-md-6 col-xl-4">
+            <div class="mu-card mu-card-interactive p-4 h-100 d-flex flex-column justify-content-between">
+              <div>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <span class="badge bg-light text-dark border">${MUEAMS.esc(f.type)}</span>
+                  ${MUEAMS.badge(f.baseline ? 'Audited Baseline' : 'Candidate Site')}
+                </div>
+                <h6 class="fw-bold mb-1">${MUEAMS.esc(f.name)}</h6>
+                <div class="tw-text-xs text-muted mb-3">${MUEAMS.esc(f.group)} · ${f.occupants ? f.occupants + ' occupants' : 'Occupancy unverified'}</div>
+                <p class="small text-secondary mb-3">${MUEAMS.esc(f.note || '')}</p>
+              </div>
+              <div class="pt-3 border-top d-flex justify-content-between align-items-center">
+                <div>
+                  <div class="tw-text-[11px] text-muted">Annual Energy</div>
+                  <div class="font-mono-num fw-bold small">${f.baseline ? MUEAMS.nf0.format(f.baseline.annualKwh) + ' kWh' : 'Pending Audit'}</div>
+                </div>
+                <div class="text-center">
+                  <div class="tw-text-[11px] text-muted">Annual Cost</div>
+                  <div class="font-mono-num fw-bold small text-success">${f.baseline ? MUEAMS.money(f.baseline.cost) : '—'}</div>
+                </div>
+                <div class="text-end">
+                  <div class="tw-text-[11px] text-muted">EUI Intensity</div>
+                  <div class="font-mono-num fw-bold small">${eui ? MUEAMS.num(eui) + ' kWh/m²' : '—'}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderAssets() {
+      const facId = document.getElementById('filter-asset-fac').value;
+      const list = state.assets.filter(a => facId === 'all' || a.facilityId === facId);
+
+      document.getElementById('assets-tbody').innerHTML = list.map(a => {
+        const fac = state.facilities.find(f => f.id === a.facilityId);
+        return `
+          <tr>
+            <td>
+              <div class="fw-bold">${MUEAMS.esc(a.name)}</div>
+              <div class="tw-text-xs text-muted">${MUEAMS.esc(a.source || '')}</div>
+            </td>
+            <td>${MUEAMS.esc(fac?.name || a.facilityId)}</td>
+            <td><span class="badge bg-light text-dark border">${MUEAMS.esc(a.category)}</span> <span class="tw-text-xs text-muted ms-1">${MUEAMS.esc(a.fuel)}</span></td>
+            <td class="text-end font-mono-num">${a.ratingW ? MUEAMS.nf0.format(a.ratingW) + ' W' : '—'}</td>
+            <td class="text-end font-mono-num">${a.quantity}</td>
+            <td class="text-end font-mono-num">${a.hours}</td>
+            <td class="text-end font-mono-num fw-bold">${a.dailyKwh != null ? MUEAMS.num(a.dailyKwh) : '—'}</td>
+            <td>${MUEAMS.badge(a.status)}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    document.getElementById('search-fac').addEventListener('input', renderFacilities);
+    document.getElementById('filter-fac').addEventListener('change', renderFacilities);
+    document.getElementById('filter-asset-fac').addEventListener('change', renderAssets);
+
+    document.getElementById('form-facility').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const areaSqm = fd.get('areaSqm') ? Number(fd.get('areaSqm')) : null;
+      await MUEAMS.request('/facilities', 'POST', {
+        id: MUEAMS.uid('fac').toLowerCase(),
+        name: fd.get('name'),
+        type: fd.get('type'),
+        group: fd.get('group') || 'Campus',
+        areaSqFt: areaSqm ? areaSqm / 0.092903 : null,
+        occupants: fd.get('occupants') ? Number(fd.get('occupants')) : null,
+        yearBuilt: fd.get('yearBuilt') ? Number(fd.get('yearBuilt')) : null,
+        annualKwh: fd.get('annualKwh') || null,
+        note: fd.get('note')
+      });
+      e.target.reset();
+      bootstrap.Modal.getInstance(document.getElementById('addFacilityModal')).hide();
+      MUEAMS.toast('Facility saved to SQLite database');
+      loadPage();
+    });
+
+    document.getElementById('form-asset').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const ratingW = Number(fd.get('ratingW'));
+      const quantity = Number(fd.get('quantity'));
+      const hours = Number(fd.get('hours'));
+      const dailyKwh = (ratingW / 1000) * quantity * hours;
+
+      await MUEAMS.request('/assets', 'POST', {
+        facilityId: fd.get('facilityId'),
+        name: fd.get('name'),
+        category: fd.get('category'),
+        fuel: fd.get('fuel'),
+        ratingW,
+        quantity,
+        hours,
+        dailyKwh,
+        status: fd.get('status'),
+        source: '2026 Field Entry · ' + MUEAMS.today()
+      });
+      e.target.reset();
+      bootstrap.Modal.getInstance(document.getElementById('addAssetModal')).hide();
+      MUEAMS.toast('Equipment logged to database');
+      loadPage();
+    });
+
+    document.getElementById('btn-export-fac').addEventListener('click', () => {
+      MUEAMS.downloadCSV('mu-eams-2026-facilities.csv', [
+        ['ID', 'Facility', 'Type', 'Group', 'Status', 'Annual kWh', 'Annual Cost KES', 'CO2 kg'],
+        ...state.facilities.map(f => [f.id, f.name, f.type, f.group, f.status, f.baseline?.annualKwh || '', f.baseline?.cost || '', f.baseline?.co2 || ''])
+      ]);
+    });
+
+    loadPage();
+  </script>
+</body>
+</html>

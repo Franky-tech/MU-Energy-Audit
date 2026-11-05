@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MU-EAMS 2026 | Executive Telemetry Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { prefix: 'tw-', corePlugins: { preflight: false } };</script>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+
+  <!-- Collapsible Top Navigation Bar -->
+  <nav class="navbar navbar-expand-lg mu-navbar sticky-top py-2">
+    <div class="container-fluid px-lg-4">
+      <a class="navbar-brand d-flex align-items-center gap-2 text-white fw-bold" href="/index.html">
+        <span class="tw-w-9 tw-h-9 tw-rounded-lg tw-bg-emerald-500 tw-text-slate-950 d-grid place-items-center fw-bolder">⚡</span>
+        <div>
+          <div class="tw-text-sm tw-tracking-wide">MU-EAMS <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-50 ms-1">2026.2</span></div>
+          <div class="tw-text-[10px] tw-text-slate-400 tw-font-normal">MOI UNIVERSITY ENERGY INTELLIGENCE</div>
+        </div>
+      </a>
+      <button class="navbar-toggler border-secondary text-white" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+        <i class="bi bi-three-dots-vertical"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav mx-auto gap-1 my-2 my-lg-0">
+          <li class="nav-item"><a class="nav-link mu-nav-link active" href="/index.html"><i class="bi bi-speedometer2 me-1"></i>Overview</a></li>
+          <li class="nav-item"><a class="nav-link mu-nav-link" href="/facilities.html"><i class="bi bi-buildings me-1"></i>Facilities & Assets</a></li>
+          <li class="nav-item"><a class="nav-link mu-nav-link" href="/meters.html"><i class="bi bi-lightning-charge me-1"></i>Submeters & Conditions</a></li>
+          <li class="nav-item"><a class="nav-link mu-nav-link" href="/audits.html"><i class="bi bi-clipboard2-check me-1"></i>Field Audits & ECMs</a></li>
+        </ul>
+        <div class="d-flex align-items-center gap-2">
+          <span class="badge rounded-pill text-bg-dark border border-secondary px-3 py-2 font-mono-num" id="tariff-pill">Tariff: KES 28.40/kWh</span>
+          <button class="btn btn-sm btn-outline-light" data-bs-toggle="modal" data-bs-target="#settingsModal">
+            <i class="bi bi-sliders me-1"></i>Tariff
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="container-fluid px-lg-4 py-4" style="max-width: 1540px;">
+
+    <!-- 2026 Hero Command Banner -->
+    <section class="mu-hero-banner p-4 p-lg-5 mb-4 shadow-sm">
+      <div class="row align-items-center g-4">
+        <div class="col-lg-8">
+          <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill tw-bg-emerald-500/10 tw-border tw-border-emerald-500/30 tw-text-emerald-300 tw-text-xs fw-semibold mb-3">
+            <span class="tw-w-2 tw-h-2 tw-rounded-full tw-bg-emerald-400"></span>
+            KESSES MAIN CAMPUS · LIVE SQLITE TELEMETRY WORKSPACE
+          </div>
+          <h1 class="display-6 fw-bold mb-2">Campus Energy & Decarbonization Command</h1>
+          <p class="tw-text-slate-300 mb-0 tw-max-w-2xl tw-text-sm tw-leading-relaxed">
+            Real-time energy baselining, KPLC CI2 tariff analytics, demand-side load profiling, and investment-grade Energy Conservation Measures (ECMs) across Moi University facilities.
+          </p>
+        </div>
+        <div class="col-lg-4 text-lg-end">
+          <div class="d-flex flex-wrap justify-content-lg-end gap-2">
+            <a href="/meters.html" class="btn btn-success fw-semibold px-3 py-2 shadow-sm">
+              <i class="bi bi-plus-circle me-1"></i>Log Meter Reading
+            </a>
+            <a href="/audits.html" class="btn btn-outline-light fw-semibold px-3 py-2">
+              <i class="bi bi-journal-check me-1"></i>Launch Audit
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 Primary KPI Cards -->
+    <div class="row g-3 mb-4" id="kpi-row"></div>
+
+    <!-- Main Analytical Grid -->
+    <div class="row g-4 mb-4">
+      <div class="col-lg-7">
+        <div class="mu-card p-4 h-100">
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <div>
+              <h5 class="fw-bold mb-1">Audited Campus Feeders · Annual Baseline (kWh)</h5>
+              <p class="text-muted small mb-0">2026 submeter baseline ranking across 8 primary Kesses campus zones</p>
+            </div>
+            <a href="/facilities.html" class="btn btn-sm btn-light border fw-semibold">Manage Registry <i class="bi bi-arrow-right"></i></a>
+          </div>
+          <div id="facility-bars" class="d-flex flex-column gap-3 mt-3"></div>
+        </div>
+      </div>
+
+      <div class="col-lg-5">
+        <div class="mu-card p-4 h-100 d-flex flex-column justify-content-between">
+          <div>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <div>
+                <h5 class="fw-bold mb-1">Oct 2026 Metered Delta & Coverage</h5>
+                <p class="text-muted small mb-0">Verified consumption from consecutive cumulative readings</p>
+              </div>
+              <span class="badge-status green">SQLite Synced</span>
+            </div>
+            <div class="row g-2 mb-3" id="telemetry-mini-cards"></div>
+            <div class="p-3 rounded-3 tw-bg-slate-50 border mb-3">
+              <div class="d-flex justify-content-between small fw-semibold mb-1">
+                <span>Campus Baseline Audit Coverage</span>
+                <span class="font-mono-num text-success" id="coverage-pct">0%</span>
+              </div>
+              <div class="telemetry-bar-bg">
+                <div class="telemetry-bar-fill" id="coverage-bar" style="width: 0%"></div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h6 class="fw-bold small text-uppercase text-muted mb-2">Top Priority Conservation Projects (ECMs)</h6>
+            <div id="top-ecms" class="d-flex flex-column gap-2"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Multi-Page Architecture Navigation Cards -->
+    <div class="row g-3">
+      <div class="col-md-4">
+        <a href="/facilities.html" class="text-decoration-none text-dark">
+          <div class="mu-card mu-card-interactive p-4 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="tw-w-10 tw-h-10 tw-rounded-xl tw-bg-indigo-50 tw-text-indigo-600 d-grid place-items-center fs-5"><i class="bi bi-building-gear"></i></span>
+              <span class="badge bg-light text-secondary border">Module 01</span>
+            </div>
+            <h6 class="fw-bold mb-1">Facilities & Equipment Inventory</h6>
+            <p class="text-muted small mb-0">Inspect building EUI (kWh/m²), add new campus blocks, and log significant energy-using equipment.</p>
+          </div>
+        </a>
+      </div>
+      <div class="col-md-4">
+        <a href="/meters.html" class="text-decoration-none text-dark">
+          <div class="mu-card mu-card-interactive p-4 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="tw-w-10 tw-h-10 tw-rounded-xl tw-bg-emerald-50 tw-text-emerald-600 d-grid place-items-center fs-5"><i class="bi bi-cpu"></i></span>
+              <span class="badge bg-light text-secondary border">Module 02</span>
+            </div>
+            <h6 class="fw-bold mb-1">Smart Submeters & Field Conditions</h6>
+            <p class="text-muted small mb-0">Record cumulative kWh readings, KPLC bills, Fluke power factor logs, and hostel occupancy metrics.</p>
+          </div>
+        </a>
+      </div>
+      <div class="col-md-4">
+        <a href="/audits.html" class="text-decoration-none text-dark">
+          <div class="mu-card mu-card-interactive p-4 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="tw-w-10 tw-h-10 tw-rounded-xl tw-bg-amber-50 tw-text-amber-600 d-grid place-items-center fs-5"><i class="bi bi-sun"></i></span>
+              <span class="badge bg-light text-secondary border">Module 03</span>
+            </div>
+            <h6 class="fw-bold mb-1">Field Walkthroughs & ECM Pipeline</h6>
+            <p class="text-muted small mb-0">Track 10-point engineering inspection checklists, CAPEX payback periods, and M&V savings verification.</p>
+          </div>
+        </a>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Settings Modal -->
+  <div class="modal fade" id="settingsModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <form class="modal-content border-0 shadow" id="settings-form">
+        <div class="modal-header bg-light">
+          <h6 class="modal-title fw-bold"><i class="bi bi-sliders me-2 text-success"></i>2026 Tariff & Carbon Parameters</h6>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label small fw-bold">Blended Electricity Tariff (KES / kWh)</label>
+            <input type="number" step="0.01" name="tariff" id="inp-tariff" class="form-control font-mono-num" required>
+            <div class="form-text">2026 KPLC Commercial/Institutional blended rate (inc. fuel & forex adjustments).</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label small fw-bold">Grid Emission Factor (kg CO₂ / kWh)</label>
+            <input type="number" step="0.001" name="emissionFactor" id="inp-ef" class="form-control font-mono-num" required>
+          </div>
+          <div class="mb-2">
+            <label class="form-label small fw-bold">Active Reporting Year</label>
+            <input type="number" name="reportingYear" id="inp-year" class="form-control font-mono-num" required>
+          </div>
+        </div>
+        <div class="modal-footer bg-light">
+          <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-sm btn-success fw-semibold">Update Parameters</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/api.js"></script>
+  <script>
+    let appState = null;
+
+    async function initDashboard() {
+      appState = await MUEAMS.request('/state');
+      const { settings, facilities, readings, opportunities } = appState;
+
+      document.getElementById('tariff-pill').textContent = `Tariff: KES ${MUEAMS.num(settings.tariff)}/kWh`;
+      document.getElementById('inp-tariff').value = settings.tariff;
+      document.getElementById('inp-ef').value = settings.emissionFactor;
+      document.getElementById('inp-year').value = settings.reportingYear;
+
+      const audited = facilities.filter(f => f.baseline);
+      const totalKwh = audited.reduce((s, f) => s + f.baseline.annualKwh, 0);
+      const totalCost = audited.reduce((s, f) => s + f.baseline.cost, 0);
+      const totalCo2 = audited.reduce((s, f) => s + f.baseline.co2, 0);
+      const totalSavings = opportunities.reduce((s, o) => s + o.saving, 0);
+
+      document.getElementById('kpi-row').innerHTML = `
+        <div class="col-sm-6 col-xl-3">
+          <div class="mu-card p-3 border-top border-4 border-success">
+            <div class="d-flex justify-content-between text-muted small fw-semibold mb-2">
+              <span>ANNUAL CAMPUS BASELINE</span><i class="bi bi-lightning-charge-fill text-success"></i>
+            </div>
+            <div class="fs-4 fw-bold font-mono-num">${MUEAMS.compact(totalKwh)} kWh</div>
+            <div class="text-muted tw-text-xs mt-1">${audited.length} audited feeders · Kesses Campus</div>
+          </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+          <div class="mu-card p-3 border-top border-4 border-primary">
+            <div class="d-flex justify-content-between text-muted small fw-semibold mb-2">
+              <span>ANNUAL UTILITY EXPENDITURE</span><i class="bi bi-cash-stack text-primary"></i>
+            </div>
+            <div class="fs-4 fw-bold font-mono-num">${MUEAMS.money(totalCost)}</div>
+            <div class="text-muted tw-text-xs mt-1">At KES ${MUEAMS.num(settings.tariff)}/kWh blended tariff</div>
+          </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+          <div class="mu-card p-3 border-top border-4 border-warning">
+            <div class="d-flex justify-content-between text-muted small fw-semibold mb-2">
+              <span>CARBON FOOTPRINT (SCOPE 2)</span><i class="bi bi-cloud-haze2-fill text-warning"></i>
+            </div>
+            <div class="fs-4 fw-bold font-mono-num">${MUEAMS.num(totalCo2 / 1000)} tCO₂e</div>
+            <div class="text-muted tw-text-xs mt-1">Grid factor: ${settings.emissionFactor} kgCO₂/kWh</div>
+          </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+          <div class="mu-card p-3 border-top border-4 border-info">
+            <div class="d-flex justify-content-between text-muted small fw-semibold mb-2">
+              <span>IDENTIFIED ECM SAVINGS</span><i class="bi bi-piggy-bank-fill text-info"></i>
+            </div>
+            <div class="fs-4 fw-bold font-mono-num text-success">${MUEAMS.money(totalSavings)}</div>
+            <div class="text-muted tw-text-xs mt-1">${opportunities.length} active engineering interventions</div>
+          </div>
+        </div>
+      `;
+
+      const sortedFac = audited.slice().sort((a, b) => b.baseline.annualKwh - a.baseline.annualKwh);
+      const maxKwh = sortedFac[0]?.baseline.annualKwh || 1;
+      document.getElementById('facility-bars').innerHTML = sortedFac.map(f => {
+        const pct = Math.max(4, (f.baseline.annualKwh / maxKwh) * 100);
+        return `
+          <div>
+            <div class="d-flex justify-content-between small mb-1">
+              <span class="fw-semibold">${MUEAMS.esc(f.name)} <span class="text-muted fw-normal">(${MUEAMS.esc(f.group)})</span></span>
+              <span class="font-mono-num fw-bold">${MUEAMS.nf0.format(f.baseline.annualKwh)} kWh</span>
+            </div>
+            <div class="telemetry-bar-bg">
+              <div class="telemetry-bar-fill" style="width: ${pct}%"></div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      const validDeltas = readings.filter(r => r.delta != null);
+      const meteredKwh = validDeltas.reduce((s, r) => s + r.delta, 0);
+      const meteredCost = validDeltas.reduce((s, r) => s + (r.cost || 0), 0);
+      document.getElementById('telemetry-mini-cards').innerHTML = `
+        <div class="col-4">
+          <div class="p-2 rounded border bg-light text-center">
+            <div class="tw-text-[11px] text-muted">Oct Metered Use</div>
+            <div class="fw-bold font-mono-num small mt-1">${MUEAMS.compact(meteredKwh)} kWh</div>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="p-2 rounded border bg-light text-center">
+            <div class="tw-text-[11px] text-muted">Oct Billed Cost</div>
+            <div class="fw-bold font-mono-num small mt-1">${MUEAMS.compact(meteredCost)} KES</div>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="p-2 rounded border bg-light text-center">
+            <div class="tw-text-[11px] text-muted">Active Submeters</div>
+            <div class="fw-bold font-mono-num small mt-1">${appState.meters.length} Units</div>
+          </div>
+        </div>
+      `;
+
+      const covPct = Math.round((audited.length / facilities.length) * 100);
+      document.getElementById('coverage-pct').textContent = `${covPct}% (${audited.length}/${facilities.length} Zones)`;
+      document.getElementById('coverage-bar').style.width = `${covPct}%`;
+
+      document.getElementById('top-ecms').innerHTML = opportunities.slice(0, 3).map(o => `
+        <div class="d-flex justify-content-between align-items-center p-2 rounded border bg-white">
+          <div class="text-truncate pe-2">
+            <div class="fw-semibold small text-truncate">${MUEAMS.esc(o.name)}</div>
+            <div class="tw-text-xs text-muted">${MUEAMS.esc(o.facility)}</div>
+          </div>
+          <div class="text-end">
+            <div class="font-mono-num fw-bold small text-success">${MUEAMS.money(o.saving)}/yr</div>
+            ${MUEAMS.badge(o.status)}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    document.getElementById('settings-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      await MUEAMS.request('/settings', 'PUT', {
+        tariff: Number(fd.get('tariff')),
+        emissionFactor: Number(fd.get('emissionFactor')),
+        reportingYear: Number(fd.get('reportingYear'))
+      });
+      bootstrap.Modal.getInstance(document.getElementById('settingsModal')).hide();
+      MUEAMS.toast('Tariff and emission parameters updated');
+      initDashboard();
+    });
+
+    initDashboard();
+  </script>
+</body>
+</html>

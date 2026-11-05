@@ -1,0 +1,59 @@
+-e "node_modules/\n*.db\n*.log" 
+# =========================
+# DEPENDENCIES
+# =========================
+# Ignore node packages folder (downloaded via npm install)
+node_modules/
+jspm_packages/
+
+# =========================
+# LOCAL DATABASES
+# =========================
+# Ignore all SQLite database files created locally during testing/execution
+*.db
+*.sqlite
+*.sqlite3
+
+# =========================
+# ENVIRONMENT & SECRETS
+# =========================
+# Ignore local environment variable files containing API keys or passwords
+.env
+.env.local
+.env.production
+
+# =========================
+# SYSTEM & OS JUNK
+# =========================
+# macOS hidden directory files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows thumbnail and desktop config files
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# =========================
+# EDITOR & IDE SETTINGS
+# =========================
+# VS Code, WebStorm, or Sublime temporary workspace configurations
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# =========================
+# LOGS & RUNTIME FILES
+# =========================
+# Node and Express runtime error logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+logs/
+*.log

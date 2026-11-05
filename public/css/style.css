@@ -1,0 +1,171 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap');
+
+:root {
+  --mu-slate-950: #090d16;
+  --mu-slate-900: #0f172a;
+  --mu-emerald-600: #059669;
+  --mu-emerald-500: #10b981;
+  --mu-indigo-600: #4f46e5;
+  --mu-amber-500: #f59e0b;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #f1f5f9;
+  color: #0f172a;
+  overflow-x: hidden;
+}
+
+.font-mono-num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Top Navigation Bar & Collapsible Transitions */
+.mu-navbar {
+  background: linear-gradient(90deg, #090d16 0%, #0f172a 55%, #131c31 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 30px -10px rgba(9, 13, 22, 0.5);
+  transition: margin-top 0.3s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.25s ease;
+}
+
+.mu-navbar.nav-collapsed {
+  margin-top: -80px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.mu-nav-link {
+  color: #94a3b8 !important;
+  font-weight: 600;
+  font-size: 0.875rem;
+  padding: 0.55rem 1rem !important;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.mu-nav-link:hover {
+  color: #f8fafc !important;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.mu-nav-link.active {
+  color: #ffffff !important;
+  background: rgba(16, 185, 129, 0.16);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.15);
+}
+
+/* Floating Re-Open Pill when Navbar is Collapsed */
+.nav-reopen-tab {
+  position: fixed;
+  top: 14px;
+  right: 22px;
+  z-index: 1090;
+  background: #090d16;
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.45);
+  border-radius: 999px;
+  padding: 7px 15px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.nav-reopen-tab:hover {
+  background: #0f172a;
+  color: #34d399;
+  transform: translateY(1px);
+}
+
+/* Slide-Out Offcanvas Sidebar Drawer */
+.mu-offcanvas {
+  background: linear-gradient(180deg, #090d16 0%, #0f172a 100%);
+  color: #f8fafc;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  width: 285px !important;
+}
+
+/* Hero Banner */
+.mu-hero-banner {
+  background: radial-gradient(circle at top right, rgba(16, 185, 129, 0.18), transparent 45%),
+              radial-gradient(circle at bottom left, rgba(79, 70, 229, 0.15), transparent 40%),
+              linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  color: #ffffff;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Custom Elevated Cards */
+.mu-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.04), 0 2px 4px -2px rgba(15, 23, 42, 0.02);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.mu-card-interactive:hover {
+  transform: translateY(-3px);
+  border-color: #cbd5e1;
+  box-shadow: 0 14px 28px -8px rgba(15, 23, 42, 0.08);
+}
+
+/* Progress & Telemetry Bars */
+.telemetry-bar-bg {
+  height: 0.6rem;
+  background-color: #e2e8f0;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.telemetry-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #059669 0%, #10b981 50%, #34d399 100%);
+  border-radius: 999px;
+  transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Table Refinement */
+.table-mu thead th {
+  background-color: #f8fafc;
+  color: #475569;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 2px solid #e2e8f0;
+  padding: 0.85rem 1rem;
+}
+
+.table-mu tbody td {
+  padding: 0.9rem 1rem;
+  vertical-align: middle;
+  font-size: 0.85rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.table-mu tbody tr:hover td {
+  background-color: #f8fafc;
+}
+
+/* Status Pill Badges */
+.badge-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.3rem 0.65rem;
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+.badge-status.green { background: #d1fae5; color: #065f46; }
+.badge-status.amber { background: #fef3c7; color: #92400e; }
+.badge-status.indigo { background: #e0e7ff; color: #3730a3; }
+.badge-status.red { background: #fee2e2; color: #991b1b; }
